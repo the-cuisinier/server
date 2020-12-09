@@ -4,6 +4,8 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 from django.http import HttpResponse, JsonResponse
 
+from .cook import InverseCook
+
 # Create your views here.
 
 
@@ -57,6 +59,18 @@ def home(request):
 		dishes = []
 		data["message"] = True
 		return JsonResponse(data)
+	else:
+		data = {
+			"message": False
+		}
+		return JsonResponse(data)
+
+
+def checkModelIntegration(request):
+	if request.method == 'POST':
+		requestBody = json.loads(request.body)
+		cook = InverseCook()
+		return JsonResponse(cook.home(requestBody["image_url"]))
 	else:
 		data = {
 			"message": False

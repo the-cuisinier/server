@@ -20,4 +20,5 @@ from app import views as app_view
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', app_view.home, name='home'),
+    path('details/', app_view.checkModelIntegration, name='details'),
 ]
