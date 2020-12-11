@@ -68,12 +68,8 @@ class InverseCook:
 		use_urls = True
 		show_anyways = False
 
-		if use_urls:
-			response = requests.get(img_file)
-			image = Image.open(BytesIO(response.content))
-		else:
-			image_path = os.path.join(image_folder, img_file)
-			image = Image.open(image_path).convert('RGB')
+		# image_path = os.path.join(image_folder, )
+		image = Image.open(img_file).convert('RGB')
 		
 		transf_list = []
 		transf_list.append(transforms.Resize(256))
@@ -91,6 +87,8 @@ class InverseCook:
 						outputs = model.sample(image_tensor, greedy=greedy[i], temperature=temperature, beam=beam[i], true_ingrs=None)
 					except:
 					  print("")
+
+				print("Model has run")
 				ingr_ids = outputs['ingr_ids']
 				recipe_ids = outputs['recipe_ids']
 
@@ -100,6 +98,7 @@ class InverseCook:
 				outs, valid = prepare_output(recipe_ids[0], ingr_ids[0], ingrs_vocab, vocab)
 				if valid['is_valid'] or show_anyways:
 					title = outs['title']
+					print(title)
 					ingredients = outs['ingrs']
 					instructions = outs['recipe']
 					recipeId = self.convertNameToId(title)

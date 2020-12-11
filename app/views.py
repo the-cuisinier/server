@@ -3,6 +3,7 @@ import json
 import firebase_admin
 from firebase_admin import credentials, firestore
 from django.http import HttpResponse, JsonResponse
+import os
 
 from .cook import InverseCook
 
@@ -66,13 +67,31 @@ def home(request):
 		return JsonResponse(data)
 
 
-def checkModelIntegration(request):
-	if request.method == 'POST':
-		requestBody = json.loads(request.body)
-		cook = InverseCook()
-		return JsonResponse(cook.home(requestBody["image_url"]))
-	else:
+
+def handle_uploaded_file(f):
+	with open(f.name, 'wb+') as destination: #write in binary wb+
+		for chunk in f.chunks():
+			destination.write(chunk)
+	return "/home/dewanshrawat15/Desktop/temp/server/" + f.name
+
+
+def checkModelIntegration(imgPath):
+	cook = InverseCook()
+	result = cook.home(imgPath)
+	print(result)
+	os.remove(imgPath)
+	return JsonResponse(result)
+
+
+def img_view_api(request):
+	print("Triggerred")
+	print(request.FILES["image"])
+	try:
+		img = request.FILES["image"]
+		return checkModelIntegration(handle_uploaded_file(img))
+	except Exception as e:
+		print(e)
 		data = {
-			"message": False
+			"message": "Request method incorrect"
 		}
 		return JsonResponse(data)
